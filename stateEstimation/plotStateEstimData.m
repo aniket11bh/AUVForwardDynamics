@@ -1,14 +1,25 @@
-function plotStateEstimData(t,X_est, P_est, Y)
+function plotStateEstimData(t, X_est, P_est, Y, type)
 
 vel_bf = Y(:,2:4)'; % m/s
 position_in = Y(:,8:10)'; % m
 euler_angle = Y(:,11:13)'*pi/180; % rad
 
-X_true = [position_in;
+if type == 'ekf'
+    X_true = [position_in;
+              euler_angle;
+              vel_bf];
+
+elseif type == 'ikf'
+    X_true = [position_in;
           euler_angle;
-          vel_bf;];
+          vel_bf;
+          zeros(3,size(position_in, 2));
+          zeros(3,size(position_in, 2))
+         ];
+end
+
 eStates = (X_true - X_est)';
-      
+
 % Fig1
 figure
 plot(t,Y(:,8:1:10));
@@ -33,7 +44,7 @@ hold off;
 
 % Fig2
 figure
-plot(t,Y(:,11:12)); 
+plot(t,Y(:,11:12));
 hold on;
 plot(t,X_est(4:5,:)*180/3.14);
 I = legend('$\phi_{true}$','$\theta_{true}$','$\phi_{est}$','$\theta_{est}$');
@@ -44,7 +55,7 @@ hold off;
 
 
 figure
-plot(t,Y(:,13)); 
+plot(t,Y(:,13));
 hold on;
 plot(t,X_est(6,:)*180/3.14);
 I = legend('$\psi_{true}$','$\psi_{est}$');

@@ -6,8 +6,8 @@ global density; % density of water
 global gravity;
 global Patm;
 
-p_meas = depth + 0.05*randn;
-% p_meas = Patm + density*gravity*depth + 0*randn;
+% p_meas = depth + 0.05*randn;
+p_meas = Patm + density*gravity*(depth + 0.05*randn);
 
 end
 

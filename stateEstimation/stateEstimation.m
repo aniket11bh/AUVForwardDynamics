@@ -78,7 +78,7 @@ if type == 'ekf'
     end
 
     % Prediction step
-    [x_est, p_est] = predict(ekf, U, tinc);
+    [x_est, p_est] = predict(ekf, U, 'ekf', tinc);
     X_est = x_est;
     P_est = p_est;
 
@@ -100,7 +100,7 @@ elseif type == 'ikf'
     % Measured IMU data as INPUT, U in prediction step
     [U, bias] = getIKFinputs(euler_angle, omega_bf, omega_bf_dot, accel_bf, tinc);
     x_est(4:6) = euler_angle;
-    x_est = propagateNavState(x_est, U, tinc);
+    x_est = propagateNavState(x_est, U, 'ikf', tinc);
     [del_X, p_est ] = predictErrorState(x_est, del_X, p_est, U, tinc);
 
     % If update available
@@ -119,6 +119,58 @@ elseif type == 'ikf'
     X_est = x_est;
     P_est = p_est;
 
+elseif type == 'ekfRL'
+    
+    % EKF robot localization
+    if isempty(ekf)
+        init_state_guess = [position_in;
+                            euler_angle;
+                            vel_bf
+                            omega_bf
+                            accel_bf];
+        P_est = P;
+        ekf = extendedKalmanFilter(@propagateNavState,... % State transition function
+                                   @getSensorData,... % Measurement function
+                                   init_state_guess);
+        ekf.MeasurementNoise = R;
+        ekf.ProcessNoise = Q;
+    end
+
+     % Initialize states & error states
+     if isempty(x_est) || isempty(p_est)
+        x_est = init_state_guess;
+        p_est = P;
+     end
+
+    % Measured IMU data as INPUT, U in prediction step
+    U = getEKFinputs(euler_angle, omega_bf, omega_bf_dot, accel_bf, tinc);
+
+    % Get measurement data of DVL
+    yDVL = dvl_model(vel_bf, omega_bf);
+    yPsensor = pSensor_model(position_in(3));
+    yPsensor = [x_est(1:2); pressureToDepth(yPsensor)];
+
+    if DVL
+         % DVL update available only at 1 HZ
+         if(rem(t,1) == 0)
+              % Correction step
+              [x_est, p_est] = correct(ekf, yDVL, 1);
+         end
+    end
+
+    if PSENSOR
+
+        % pressure sensor update at 10 HZ, Correction step
+        ekf.MeasurementNoise = R_Psensor;
+        [x_est, p_est] = correct(ekf, yPsensor, 2);
+        ekf.MeasurementNoise = R;
+    end
+
+    % Prediction step
+    [x_est, p_est] = predict(ekf, U, 'ekfRL' ,tinc);
+    X_est = x_est;
+    P_est = p_est;
+    
 else
     fprintf('Unknown estimator type');
 end

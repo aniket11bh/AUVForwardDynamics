@@ -52,6 +52,13 @@ elseif strcmp(Estimator_type, 'ekf')
     X_est = zeros(size(X_true));
     P_est = zeros(size(X_true,2),9,9);
 
+elseif strcmp(Estimator_type, 'ekfRL')
+    EKF_RLparams;
+    X_true = [position_in;
+              euler_angle;
+              vel_bf
+              omega_bf
+              accel_bf];
 else
     fprintf('Incorrect estimator type');
 end

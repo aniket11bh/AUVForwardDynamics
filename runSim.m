@@ -59,7 +59,10 @@
  
 %Initialise state vector X here
 global tinc;
+global Estimator_type;
+
 tinc = 0.1;
+Estimator_type = 'ekf';
 X = init_state();
 
 AUVsensors;
@@ -94,7 +97,7 @@ if(temp~=0)
      dlmwrite(fname1,temp,'-append','precision',4);
      fclose(fid);
 
-    plotStateEstimData(timespan, X_estimate', P_estimate, Y);
+    plotStateEstimData(timespan, X_estimate', P_estimate, Y, Estimator_type);
     % Function for bot visualisation
     %  visualiseBot(timespan,Y,caseNo);
 

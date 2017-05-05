@@ -24,9 +24,13 @@ persistent x_est;
 persistent p_est;
 persistent del_X;
 persistent bias;
+
+global data_robotLocalization;
 global P Q R R_Psensor;
 global density gravity Patm;
 global DVL PSENSOR;
+
+global sigma_a sigma_g sigma_dvl;
 
 % Check type %
 if type == 'ekf'
@@ -51,16 +55,26 @@ if type == 'ekf'
                  vel_bf
                 ];
         p_est = P;
+        
      end
 
     % Measured IMU data as INPUT, U in prediction step
     U = getEKFinputs(euler_angle, omega_bf, omega_bf_dot, accel_bf, tinc);
-
+        
     % Get measurement data of DVL
     yDVL = dvl_model(vel_bf, omega_bf);
     yPsensor = pSensor_model(position_in(3));
     yPsensor = [x_est(1:2); pressureToDepth(yPsensor)];
 
+    % Save data for robot loc. pkg
+    a = U(1:3);
+    g = U(4:6);
+    
+    data_robotLocalization = [data_robotLocalization; [t, a', ones(1,3)*sigma_a, ...
+                                                                                              g', ones(1,3)*sigma_g, ...
+                                                                                              yDVL', ones(1,3)*sigma_dvl, ...
+                                                                                              yPsensor', diag(R_Psensor)']];
+    
     if DVL
          % DVL update available only at 1 HZ
          if(rem(t,1) == 0)

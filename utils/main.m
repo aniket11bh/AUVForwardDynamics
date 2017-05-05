@@ -67,4 +67,13 @@ end
 eStates = (X_true - X_est)';
 timeVector = t;
 
+% Save robot localization data
+names = {'t', 'a_x', 'a_y', 'a_z', 's_axx', 's_ayy', 's_azz' , ...
+                'g_x', 'g_y', 'g_w', 's_gxx', 's_gyy', 's_gzz' , ...
+                'v_x',  'v_y', 'v_z', 's_vxx', 's_vyy', 's_vzz' , ...
+                'd_x',  'd_y', 'd_z', 's_dxx', 's_dyy', 's_dzz'};
+
+T = cell2table( num2cell(data_robotLocalization),'VariableNames',names);
+writetable(T,'./datapoints/robotLocalization.csv');
+
 plotStateEstimData(timeVector, X_est, P_est, A, Estimator_type);

@@ -23,7 +23,7 @@ psi = euler_angles(3);
 
 R = [ ...
  cos(theta)*cos(psi)                               cos(theta)*sin(psi)                              -sin(theta);
--cos(phi)*sin(psi) + sin(phi)*sin(theta)*cos(psi)  cos(phi)*cos(psi) + sin(phi)*sin(theta)*sin(psi) sin(psi)*cos(theta)
+-cos(phi)*sin(psi) + sin(phi)*sin(theta)*cos(psi)  cos(phi)*cos(psi) + sin(phi)*sin(theta)*sin(psi) sin(phi)*cos(theta)
  sin(phi)*sin(psi) + sin(phi)*sin(theta)*cos(psi) -sin(phi)*cos(psi) + sin(phi)*sin(theta)*sin(psi) sin(phi)*cos(theta)];
 
 

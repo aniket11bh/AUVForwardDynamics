@@ -10,17 +10,17 @@ global earth_rate;
 global R_i2t;
 global DVL_to_body;
 global sigma_g;
-persistent wb;
 
-if isempty(wb)
-    wb = U(4:6);
-end
+%if isempty(wb)
+%    wb = U(4:6);
+%end
 
 R_t2b = DCM(X(4:6));
 earth_rate_t = R_i2t*earth_rate; % earth_rate in tangent frame.
 sigma_v = dvl_noise_density*(1/sqrt(tinc));
 
-wb = wb + (euler_to_bodyRates(X(4:6), 1)*X(4:6) + R_t2b*earth_rate_t)*tinc;
+%wb = wb + (euler_to_bodyRates(X(4:6), 1)*X(4:6) + R_t2b*earth_rate_t)*tinc;
+wb = U(4:6)-X(13:15)-R_t2b*earth_rate_t;
 
 yDVL_cap = DVL_to_body'*(X(7:9) + cross(wb, d_DVL));
 

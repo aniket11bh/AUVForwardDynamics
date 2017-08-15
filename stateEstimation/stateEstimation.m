@@ -99,7 +99,7 @@ elseif type == 'ikf'
 
     % Measured IMU data as INPUT, U in prediction step
     [U, bias] = getIKFinputs(euler_angle, omega_bf, omega_bf_dot, accel_bf, tinc);
-    x_est(4:6) = euler_angle;
+    %x_est(4:6) = euler_angle; 
     x_est = propagateNavState(x_est, U, tinc);
     [del_X, p_est ] = predictErrorState(x_est, del_X, p_est, U, tinc);
 
@@ -111,8 +111,10 @@ elseif type == 'ikf'
 %          if(rem(t,1) == 0)
              [del_y, H, R] = dvlErrorState(yDVL, x_est, U, tinc);
              [del_X, p_est] = correctErrorState(del_y, H, R, del_X, p_est);
+             [euler_angle_plus(3),euler_angle_plus(2),euler_angle_plus(1)]=dcm2angle(DCM(x_est(4:6))*(eye(3)-skew(del_X(4:6))));
              x_est = x_est + del_X;
-%              del_X = zeros(15,1);
+             x_est(4:6)=euler_angle_plus;
+             del_X = zeros(15,1);
 %          end
     end
 

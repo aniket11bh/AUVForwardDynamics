@@ -15,6 +15,8 @@ global gravity;
 global d_IMU;
 global R_i2t;
 global earth_rate;
+global accel_corr_time;
+global gyro_corr_time;
 persistent prevWb;
 persistent wb_dot;
 
@@ -52,7 +54,8 @@ x_dot(7:9) = IMU_to_body*u + G_b ...
              - cross(wb, X(7:9));
          
 % bias %
-x_dot(10:15) = 0; 
+x_dot(10:12) = -X(10:12)/accel_corr_time;
+x_dot(13:15) = -X(13:15)/gyro_corr_time;
 
 end
 

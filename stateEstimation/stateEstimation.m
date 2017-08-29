@@ -102,22 +102,29 @@ elseif type == 'ikf'
     %x_est(4:6) = euler_angle; 
     x_est = propagateNavState(x_est, U, tinc);
     [del_X, p_est ] = predictErrorState(x_est, del_X, p_est, U, tinc);
-
     % If update available
     yDVL = dvl_model(vel_bf, omega_bf);
 
     if DVL
          % DVL update available only at 1 HZ
-%          if(rem(t,1) == 0)
+          if(rem(t,1) == 0)
              [del_y, H, R] = dvlErrorState(yDVL, x_est, U, tinc);
              [del_X, p_est] = correctErrorState(del_y, H, R, del_X, p_est);
              [euler_angle_plus(3),euler_angle_plus(2),euler_angle_plus(1)]=dcm2angle(DCM(x_est(4:6))*(eye(3)-skew(del_X(4:6))));
              x_est = x_est + del_X;
              x_est(4:6)=euler_angle_plus;
              del_X = zeros(15,1);
-%          end
+          end
     end
-
+    
+    %Debug
+    %{
+    if(~isreal(x_est)||~isreal(p_est))
+        error('Kuch toh locha hai')
+    end
+    %}
+    %Debug
+    
     X_est = x_est;
     P_est = p_est;
 

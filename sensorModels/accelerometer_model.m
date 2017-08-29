@@ -44,6 +44,11 @@ accelerometer_bias = (1 - tinc/accel_corr_time)*accelerometer_bias + sigma_GM*ra
 accelerometer_noise_density_d = accelerometer_noise_density*(1/sqrt(tinc));
 accelerometer_white_noise = accelerometer_noise_density_d*randn(3,1);
 
+%Debug for IKF
+%accelerometer_white_noise=zeros(3,1);
+%accelerometer_bias=zeros(3,1);
+%Debug for IKF
+
 a_meas = (eye(3,3)+ IMU_Accelerometer_SF_MA)*Aimeas + accelerometer_bias + accelerometer_white_noise;
 
 end

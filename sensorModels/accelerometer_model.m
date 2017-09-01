@@ -5,7 +5,7 @@
 % A comparison between different error modelling of MEMS applied to GPS/INS
 % integerated system
 
-function [a_meas , accelerometer_bias ] = accelerometer_model(R_inertial_to_body, wb, wb_dot, Acc_true, accelerometer_bias, tinc)
+function [a_meas , accelerometer_bias ] = accelerometer_model(R_inertial_to_body, V, wb, wb_dot, Acc_true, accelerometer_bias, tinc)
 % ACCELEROMETER_MODEL generates measured acceleration data in IMU frame [m/s2]
 %
 % Inputs :
@@ -26,7 +26,7 @@ global accelerometer_noise_density;
 global d_IMU;
 
 g = [0 0 1]'*gravity;
-Aimeas = Acc_true - R_inertial_to_body*g + cross(wb,cross(wb,d_IMU)) + cross(wb_dot,d_IMU); % TODO : check correctness
+Aimeas = Acc_true - R_inertial_to_body*g + cross(wb,V) + cross(wb,cross(wb,d_IMU)) + cross(wb_dot,d_IMU); % TODO : check correctness
 
 % Tranform Aimeas to IMU frame.
 Aimeas = IMU_to_body'*Aimeas;

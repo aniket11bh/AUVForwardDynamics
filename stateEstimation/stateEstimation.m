@@ -54,7 +54,7 @@ if type == 'ekf'
      end
 
     % Measured IMU data as INPUT, U in prediction step
-    U = getEKFinputs(euler_angle, omega_bf, omega_bf_dot, accel_bf, tinc);
+    U = getEKFinputs(euler_angle, vel_bf, omega_bf, omega_bf_dot, accel_bf, tinc);
 
     % Get measurement data of DVL
     yDVL = dvl_model(vel_bf, omega_bf);
@@ -98,7 +98,7 @@ elseif type == 'ikf'
     end
 
     % Measured IMU data as INPUT, U in prediction step
-    [U, bias] = getIKFinputs(euler_angle, omega_bf, omega_bf_dot, accel_bf, tinc);
+    [U, bias] = getIKFinputs(euler_angle, vel_bf, omega_bf, omega_bf_dot, accel_bf, tinc);
     %x_est(4:6) = euler_angle; 
     x_est = propagateNavState(x_est, U, tinc);
     [del_X, p_est ] = predictErrorState(x_est, del_X, p_est, U, tinc);

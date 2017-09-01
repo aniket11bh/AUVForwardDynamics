@@ -29,7 +29,7 @@ earth_rate_t = R_i2t*earth_rate; % earth_rate in tangent frame.
 G_b = R_t2b* (g_t - cross(earth_rate_t, cross(earth_rate_t, X(1:3) ) ) );
 
 wb = IMU_to_body*(U(4:6) - X(13:15)); % Body rate - gyrobias
-u = U(1:3) - X(11:13); % Meas Acceleration - accelbias
+u = U(1:3) - X(10:12); % Meas Acceleration - accelbias
 
 if isempty(prevWb)
     prevWb = wb;
@@ -49,9 +49,9 @@ x_dot(1:3) = R_t2b' * X(7:9);
 x_dot(4:6) = euler_to_bodyRates(X(4:6), -1) * (wb  - R_t2b*earth_rate_t);
 
 % dot{v_{b/t}^{b}} %
-x_dot(7:9) = IMU_to_body*u + G_b;
-             %- R_t2b*cross(earth_rate_t, R_t2b'*X(7:9)) ...
-             %- cross(wb, X(7:9));
+x_dot(7:9) = IMU_to_body*u + G_b ...
+             - R_t2b*cross(earth_rate_t, R_t2b'*X(7:9)) ...
+             - cross(wb, X(7:9));
          
 % bias %
 x_dot(10:12) = -X(10:12)/accel_corr_time;

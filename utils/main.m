@@ -9,7 +9,8 @@ addpath('helperFunctions');
 addpath('stateEstimation');
 
 %% load simulation parameters & data
-A = csvread('GoodSensordata30min.csv',1);
+filename='GoodSensordata200Sec.csv';
+A = csvread(filename,1);
 vel_bf = A(:,2:4)'; % m/s
 omega_bf = A(:,5:7)'*pi/180; % rad/s
 position_in = A(:,8:10)'; % m
@@ -26,7 +27,7 @@ a = [t, vel_bf', omega_bf', position_in', euler_angle', A(:,14:19), accel_bf', o
 
 %% load auv parameters as global params. [req. tinc]
 AUVsensors;
-Estimator_type = 'ekf';
+Estimator_type = 'ikf';
 
 % Load correct kalman filter params
 if strcmp(Estimator_type, 'ikf')
@@ -67,4 +68,4 @@ end
 eStates = (X_true - X_est)';
 timeVector = t;
 
-plotStateEstimData(timeVector, X_est, P_est, A, Estimator_type);
+plotStateEstimData(timeVector, X_est, P_est, A, Estimator_type,filename);

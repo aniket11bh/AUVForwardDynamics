@@ -29,6 +29,11 @@ gyro_bias = (1 - tinc/gyro_corr_time)*gyro_bias + sigma_GM*randn(3,1);
 gyroscope_noise_density_d = gyroscope_noise_density*(1/sqrt(tinc));
 gyroscope_white_noise = gyroscope_noise_density_d*randn(3,1);
 
+%Debug for IKF
+%gyroscope_white_noise=zeros(3,1);
+%gyro_bias=zeros(3,1);
+%Debug for IKF
+
 WMeas = wb + gyro_bias + gyroscope_white_noise;
 
 end

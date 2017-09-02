@@ -1,4 +1,4 @@
-function [ U, bias ] = getIKFinputs(euler_angle, omega_bf, omega_bf_dot, accel_bf, tinc)
+function [ U, bias ] = getIKFinputs(euler_angle, vel_bf, omega_bf, omega_bf_dot, accel_bf, tinc)
 % GET_KF_INPUTS returns input of EKF prediction step
 %
 % Inputs :
@@ -24,6 +24,7 @@ end
                                                  
 % Get measured acceleration and Angular Vel. in respective sensor frames
 [IMUaccel_bf_meas, accel_bias] = accelerometer_model(DCM(euler_angle), ... % R_inertialF_to_bodyF
+                                                     vel_bf, ...           % u
                                                      omega_bf, ...         % Body rates
                                                      omega_bf_dot, ...     % Derivative of Body rates
                                                      accel_bf, ...         % u_dot

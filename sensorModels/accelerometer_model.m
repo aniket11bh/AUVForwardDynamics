@@ -5,7 +5,7 @@
 % A comparison between different error modelling of MEMS applied to GPS/INS
 % integerated system
 
-function [a_meas , accelerometer_bias ] = accelerometer_model(R_inertial_to_body, wb, wb_dot, Acc_true, accelerometer_bias, tinc)
+function [a_meas , accelerometer_bias ] = accelerometer_model(R_inertial_to_body, V, wb, wb_dot, Acc_true, accelerometer_bias, tinc)
 % ACCELEROMETER_MODEL generates measured acceleration data in IMU frame [m/s2]
 %
 % Inputs :
@@ -26,7 +26,7 @@ global accelerometer_noise_density;
 global d_IMU;
 
 g = [0 0 1]'*gravity;
-Aimeas = Acc_true - R_inertial_to_body*g + cross(wb,cross(wb,d_IMU)) + cross(wb_dot,d_IMU); % TODO : check correctness
+Aimeas = Acc_true - R_inertial_to_body*g + cross(wb,V) + cross(wb,cross(wb,d_IMU)) + cross(wb_dot,d_IMU); % TODO : check correctness
 
 % Tranform Aimeas to IMU frame.
 Aimeas = IMU_to_body'*Aimeas;
@@ -43,6 +43,11 @@ accelerometer_bias = (1 - tinc/accel_corr_time)*accelerometer_bias + sigma_GM*ra
 % accelerometer_white_noise_d = accelerometer_VRW*(1/sqrt(tinc));     %  White noise (m/s2)
 accelerometer_noise_density_d = accelerometer_noise_density*(1/sqrt(tinc));
 accelerometer_white_noise = accelerometer_noise_density_d*randn(3,1);
+
+%Debug for IKF
+%accelerometer_white_noise=zeros(3,1);
+%accelerometer_bias=zeros(3,1);
+%Debug for IKF
 
 a_meas = (eye(3,3)+ IMU_Accelerometer_SF_MA)*Aimeas + accelerometer_bias + accelerometer_white_noise;
 

@@ -1,5 +1,7 @@
-function plotStateEstimData(t, X_est, P_est, Y, type)
+function plotStateEstimData(t, X_est, P_est, Y, type, filename)
 
+[~,filename,~]=fileparts(filename);
+filename=strcat('datapoints/',filename,'_',type,'_est.csv');
 vel_bf = Y(:,2:4)'; % m/s
 position_in = Y(:,8:10)'; % m
 euler_angle = Y(:,11:13)'*pi/180; % rad
@@ -8,6 +10,7 @@ if type == 'ekf'
     X_true = [position_in;
               euler_angle;
               vel_bf];
+    tab=array2table(X_est','VariableNames',{'X_est' 'Y_est' 'Z_est' 'phi_est' 'theta_est' 'psi_est' 'u_est' 'v_est' 'w_est'});
 
 elseif type == 'ikf'
     X_true = [position_in;
@@ -16,8 +19,10 @@ elseif type == 'ikf'
           zeros(3,size(position_in, 2));
           zeros(3,size(position_in, 2))
          ];
+    tab=array2table(X_est','VariableNames',{'X_est' 'Y_est' 'Z_est' 'phi_est' 'theta_est' 'psi_est' 'u_est' 'v_est' 'w_est' 'bias_ax_est' 'bias_ay_est' 'bias_az_est' 'bias_gx_est' 'bias_gy_est' 'bias_gz_est'});
 end
 
+writetable(tab,filename);
 eStates = (X_true - X_est)';
 
 % Fig1

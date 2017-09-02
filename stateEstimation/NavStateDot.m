@@ -15,19 +15,21 @@ global gravity;
 global d_IMU;
 global R_i2t;
 global earth_rate;
+global accel_corr_time;
+global gyro_corr_time;
 persistent prevWb;
 persistent wb_dot;
 
 
 g_t = [0 0 1]'*gravity; % gravity in tangent frame
 R_t2b = DCM(X(4:6));
-x_dot = zeros(9,1);
+x_dot = zeros(15,1);
 
 earth_rate_t = R_i2t*earth_rate; % earth_rate in tangent frame.
 G_b = R_t2b* (g_t - cross(earth_rate_t, cross(earth_rate_t, X(1:3) ) ) );
 
 wb = IMU_to_body*(U(4:6) - X(13:15)); % Body rate - gyrobias
-u = U(1:3) - X(11:13); % Meas Acceleration - accelbias
+u = U(1:3) - X(10:12); % Meas Acceleration - accelbias
 
 if isempty(prevWb)
     prevWb = wb;
@@ -52,7 +54,8 @@ x_dot(7:9) = IMU_to_body*u + G_b ...
              - cross(wb, X(7:9));
          
 % bias %
-x_dot(10:15) = 0; 
+x_dot(10:12) = -X(10:12)/accel_corr_time;
+x_dot(13:15) = -X(13:15)/gyro_corr_time;
 
 end
 
